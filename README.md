@@ -22,3 +22,21 @@ providing features such as
 Requires Android 7.0 Nougat or above
 
 ### Setup
+
+#### Git demo
+
+For developers, this project requires
+
+* Flutter SDK (1.12.13) (**Recommend:** Install via IntelliJ Plugins)
+
+* Dart (2.7.0) (**Recommend:** Install via IntelliJ Plugins)
+
+* Android SDK (API level 24) (**Recommend:** Install via IntelliJ Settings -> Android SDK)
+
+Clone the project to a local repository
+
+Connect to an android or ios device via USB
+
+Run flutter doctor to check for connected device
+
+Run main.dart or flutter run to install the demo on your device
