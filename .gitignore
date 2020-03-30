@@ -43,6 +43,9 @@ gradle
 gradlew
 gradlew.bat
 
+# Firebase deploy log
+.firebase
+
 # Credentials
 client_id.json
 debug.keystore
