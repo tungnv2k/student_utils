@@ -44,5 +44,6 @@ Future<String> signInWithGoogle() async {
 void signOutGoogle() async {
   await googleSignIn.signOut();
 
-  print("User Sign Out");
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.remove('email');
 }
