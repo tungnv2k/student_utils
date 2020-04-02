@@ -35,6 +35,9 @@ dependencies:
   firebase_auth: ^0.11.1+8
   google_sign_in: ^4.0.4
 
+  # Keep users logged in on app exit
+  shared_preferences: ^0.5.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
