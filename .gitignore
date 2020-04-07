@@ -35,7 +35,7 @@ local.properties
 lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules.
-!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!/assets/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 # Gradle
 gradle
@@ -43,6 +43,8 @@ gradle
 gradlew
 gradlew.bat
 
+# Firebase deploy log
+.firebase
+
 # Credentials
-client_id.json
 debug.keystore
