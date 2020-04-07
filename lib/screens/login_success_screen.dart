@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
-
+import 'package:student_utils_app/models/note.dart';
 import 'package:student_utils_app/screens/bookmark_screen.dart';
 import 'package:student_utils_app/screens/calendar_screen.dart';
 import 'package:student_utils_app/screens/note_list_screen.dart';
-
+import 'package:student_utils_app/service/login/sign_in.dart';
 
 Map<String, List<CalendarEvent>> dateEvents = <String, List<CalendarEvent>>{};
 
@@ -18,6 +18,7 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
 
   @override
   void initState() {
+    signInWithGoogle(silently: true);
     pageController = PageController(initialPage: 1);
     super.initState();
   }

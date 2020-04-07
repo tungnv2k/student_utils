@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 
 import 'login_success_screen.dart';
@@ -133,7 +134,27 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: BorderRadius.circular(40.0)),
       child: FlatButton(
         splashColor: Colors.black,
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            _isLoading = true;
+          });
+          signInWithGoogle().then((isLoggedIn) async {
+            if (isLoggedIn) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString('email', email);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return LoginSuccessScreen();
+                  },
+                ),
+              );
+            }
+            setState(() {
+              _isLoading = false;
+            });
+          });
+        },
         child: Padding(
           padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
           child: Row(
