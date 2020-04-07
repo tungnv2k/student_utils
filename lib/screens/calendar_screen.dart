@@ -2,7 +2,10 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
 import 'package:student_utils_app/screens/login_screen.dart';
+import 'package:student_utils_app/service/calendar/google_calendar_service.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
+import 'package:student_utils_app/service/parse/date_time_parse.dart';
+
 import '../components/app_bar.dart';
 import 'login_success_screen.dart';
 
@@ -18,6 +21,7 @@ class CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     _scrollController = ScrollController(initialScrollOffset: 7);
+    futureEvents = initCalendar();
     super.initState();
   }
 
@@ -46,7 +50,7 @@ class CalendarScreenState extends State<CalendarScreen> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 88.0,
                       color: Colors.white,
-                      child: _buildListView()),
+                      child: _buildDateList()),
                 ),
               ),
             ],
@@ -90,6 +94,27 @@ class CalendarScreenState extends State<CalendarScreen> {
       ),
     );
   }
+
+  Widget _buildDateList() {
+    if (dateEvents.isNotEmpty) {
+      return _buildListView();
+    }
+    return FutureBuilder<Map<String, List<CalendarEvent>>>(
+      future: futureEvents,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          dateEvents.addAll(snapshot.data);
+          return _buildListView();
+        }
+        return Column(
+          children: <Widget>[
+            SizedBox(height: 5.0, child: new LinearProgressIndicator()),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildListView() {
     return ListView.builder(
         padding: EdgeInsets.all(6.0),
