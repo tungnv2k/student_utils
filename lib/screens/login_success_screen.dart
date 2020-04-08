@@ -14,13 +14,19 @@ class LoginSuccessScreen extends StatefulWidget {
 }
 
 class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
-  PageController pageController;
+  PageController _pageController;
 
   @override
   void initState() {
-    signInWithGoogle(silently: true);
-    pageController = PageController(initialPage: 1);
     super.initState();
+    signInWithGoogle(silently: true);
+    _pageController = PageController(initialPage: 1);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,7 +35,7 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
       body: WillPopScope(
         onWillPop: () => null, // Prevent returning to login_screen
         child: PageView(
-          controller: pageController,
+          controller: _pageController,
           children: <Widget>[
             BookmarkScreen(),
             CalendarScreen(),

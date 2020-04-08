@@ -12,7 +12,7 @@ class NoteListScreenState extends State<NoteListScreen> {
   List<Note> noteList = <Note>[
     Note(title: null, description: "Tran Quoc Thong"),
     Note(title: "Idol", description: "Japonaise"),
-    Note(title: "", description: "Stop it"),
+    Note(title: "OIK", description: "Stop it"),
     Note(
         title: null,
         description:

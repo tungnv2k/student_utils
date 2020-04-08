@@ -20,9 +20,15 @@ class CalendarScreenState extends State<CalendarScreen> {
 
   @override
   void initState() {
+    super.initState();
     _scrollController = ScrollController(initialScrollOffset: 7);
     futureEvents = initCalendar();
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
