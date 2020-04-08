@@ -21,9 +21,17 @@ class NoteScreenState extends State<NoteScreen> {
 
   @override
   void initState() {
+    super.initState();
     _titleTextController = TextEditingController(text: widget.note.title);
     _textController = TextEditingController(text: widget.note.description);
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _titleTextController.dispose();
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
