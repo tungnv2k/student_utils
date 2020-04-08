@@ -22,6 +22,7 @@ class NoteScreenState extends State<NoteScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController(initialScrollOffset: 7);
     _titleTextController = TextEditingController(text: widget.note.title);
     _textController = TextEditingController(text: widget.note.description);
   }
