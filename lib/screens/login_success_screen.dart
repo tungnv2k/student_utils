@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:googleapis/calendar/v3.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
 import 'package:student_utils_app/models/note.dart';
 import 'package:student_utils_app/screens/bookmark_screen.dart';
@@ -7,6 +8,7 @@ import 'package:student_utils_app/screens/note_list_screen.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 
 Map<String, List<CalendarEvent>> dateEvents = <String, List<CalendarEvent>>{};
+CalendarApi calendarApi;
 
 class LoginSuccessScreen extends StatefulWidget {
   @override

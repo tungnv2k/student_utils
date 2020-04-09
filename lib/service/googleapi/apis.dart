@@ -1,8 +1,7 @@
 import 'package:googleapis/calendar/v3.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
-
-CalendarApi calendarApi;
+import 'package:student_utils_app/screens/login_success_screen.dart';
 
 void getApiAccess(var authHeaders) {
   var client = GoogleHttpClient(authHeaders);
