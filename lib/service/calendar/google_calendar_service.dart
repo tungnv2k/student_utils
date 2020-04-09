@@ -1,6 +1,6 @@
 import 'package:googleapis/calendar/v3.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
-import 'package:student_utils_app/service/googleapi/apis.dart';
+import 'package:student_utils_app/screens/login_success_screen.dart';
 import 'package:student_utils_app/service/parse/date_time_parse.dart';
 
 Future<Map<String, List<CalendarEvent>>> initCalendar() {
