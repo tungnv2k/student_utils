@@ -39,6 +39,8 @@ Future<Map<String, List<CalendarEvent>>> getEvents(
     parseCalendarEvents(events, update);
   });
 
+  sortList(update);
+
   return update;
 }
 
@@ -73,6 +75,18 @@ void parseCalendarEvents(
         endTime: end,
       ));
       return list;
+    });
+  });
+}
+
+void sortList(Map<String, List<CalendarEvent>> update) {
+  update.forEach((key, list) {
+    list.sort((elem1, elem2) {
+      return elem1.startTime == null || elem2.startTime == null
+          ? -1
+          : elem1.startTime.isAfter(elem2.startTime)
+          ? 1
+          : elem1.startTime.isBefore(elem2.startTime) ? -1 : 0;
     });
   });
 }
