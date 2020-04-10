@@ -15,14 +15,14 @@ Future<Map<String, List<CalendarEvent>>> getEvents(
     await new Future.delayed(const Duration(seconds: 5));
   }
 
-  var calendarIds = [];
-
-  var calendars = await calendarApi.calendarList.list();
-  calendars.items.forEach((CalendarListEntry calendar) {
-    if (!calendar.id.contains("@group.v.calendar.google.com")) {
-      calendarIds.add(calendar.id);
-    }
-  });
+  if (calendarIds.isEmpty) {
+    var calendars = await calendarApi.calendarList.list();
+    calendars.items.forEach((CalendarListEntry calendar) {
+      if (!calendar.id.contains("@group.v.calendar.google.com")) {
+        calendarIds.add(calendar.id);
+      }
+    });
+  }
 
   var futures = List<Future<Events>>();
   calendarIds.forEach((id) {
@@ -85,8 +85,8 @@ void sortList(Map<String, List<CalendarEvent>> update) {
       return elem1.startTime == null || elem2.startTime == null
           ? -1
           : elem1.startTime.isAfter(elem2.startTime)
-          ? 1
-          : elem1.startTime.isBefore(elem2.startTime) ? -1 : 0;
+              ? 1
+              : elem1.startTime.isBefore(elem2.startTime) ? -1 : 0;
     });
   });
 }
