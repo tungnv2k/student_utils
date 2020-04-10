@@ -9,6 +9,7 @@ import 'package:student_utils_app/service/login/sign_in.dart';
 
 Map<String, List<CalendarEvent>> dateEvents = <String, List<CalendarEvent>>{};
 CalendarApi calendarApi;
+var calendarIds = [];
 
 class LoginSuccessScreen extends StatefulWidget {
   @override
