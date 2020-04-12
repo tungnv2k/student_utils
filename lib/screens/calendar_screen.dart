@@ -5,6 +5,7 @@ import 'package:student_utils_app/screens/login_screen.dart';
 import 'package:student_utils_app/service/calendar/google_calendar_service.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 import 'package:student_utils_app/service/parse/date_time_parse.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../components/app_bar.dart';
 import 'login_success_screen.dart';
@@ -15,18 +16,23 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class CalendarScreenState extends State<CalendarScreen> {
+  CalendarController _calendarController;
   ScrollController _scrollController;
   Future<Map<String, List<CalendarEvent>>> futureEvents;
+  double heightCalendar;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController(initialScrollOffset: 7);
+    _calendarController = CalendarController();
+    heightCalendar = 0.0;
     futureEvents = initCalendar();
   }
 
   @override
   void dispose() {
+    _calendarController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -38,13 +44,45 @@ class CalendarScreenState extends State<CalendarScreen> {
         children: <Widget>[
           Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              height: 300.0,
-              child: buildTopBar("Calendar")),
+              height: heightCalendar + 90,
+              child: Wrap(
+                children: <Widget>[
+                  GestureDetector(
+                    child: buildTopBar("Calendar"),
+                    onTap: () {
+                      setState(() {
+                        if (heightCalendar == 0) {
+                          List<DateTime> list = _calendarController.visibleDays;
+                          DateTime first = list[0];
+                          DateTime last = list[list.length - 1];
+                          int rows = last.difference(first).inDays ~/ 7;
+                          heightCalendar = 140.0 + rows * 40;
+                        } else
+                          heightCalendar = 0.0;
+                      });
+                    },
+                  ),
+                  TableCalendar(
+                    calendarController: _calendarController,
+                    rowHeight: 40.0,
+                    startingDayOfWeek: StartingDayOfWeek.monday,
+                    availableCalendarFormats: const {
+                      CalendarFormat.month: 'Month',
+                      CalendarFormat.week: 'Week',
+                    },
+                    headerStyle: HeaderStyle(
+                      formatButtonShowsNext: false,
+                    ),
+                    onDaySelected: (day, list) => scrollTo(day),
+                    onVisibleDaysChanged: _onVisibleDaysChanged,
+                  ),
+                ],
+              )),
           Column(
             children: <Widget>[
-              Container(
-                height: 88.0,
-                color: Colors.transparent,
+              SizedBox(
+                height: heightCalendar + 90,
+                width: 0.1,
               ),
               Flexible(
                 child: ClipRRect(
@@ -243,5 +281,26 @@ class CalendarScreenState extends State<CalendarScreen> {
       toTimeFrame(startTime, endTime),
       style: TextStyle(color: Colors.white, fontSize: 15.0),
     );
+  }
+
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
+    print(first.toString() + last.toString());
+    int rows = last.difference(first).inDays ~/ 7;
+    setState(() {
+      heightCalendar = 140.0 + rows * 40;
+    });
+    if (format == CalendarFormat.month) {
+      if (first.day != 1) {
+        _calendarController.setSelectedDay(
+            DateTime(first.year, first.month + 1, 1),
+            runCallback: true);
+      } else {
+        _calendarController.setSelectedDay(first, runCallback: true);
+      }
+    }
+    if (format == CalendarFormat.week) {
+      _calendarController.setSelectedDay(first, runCallback: true);
+    }
   }
 }
