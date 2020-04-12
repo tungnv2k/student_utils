@@ -37,6 +37,8 @@ dependencies:
   # Keep users logged in on app exit
   shared_preferences: ^0.5.6
 
+  # Date picker
+  table_calendar: ^2.2.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
