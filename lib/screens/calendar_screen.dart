@@ -45,7 +45,7 @@ class CalendarScreenState extends State<CalendarScreen> {
           Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               height: heightCalendar + 90,
-              child: Wrap(
+              child: Column(
                 children: <Widget>[
                   GestureDetector(
                     child: buildTopBar("Calendar"),
@@ -285,7 +285,6 @@ class CalendarScreenState extends State<CalendarScreen> {
 
   void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
-    print(first.toString() + last.toString());
     int rows = last.difference(first).inDays ~/ 7;
     setState(() {
       heightCalendar = 140.0 + rows * 40;
