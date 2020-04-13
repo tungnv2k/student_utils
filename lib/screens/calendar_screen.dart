@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
 import 'package:student_utils_app/screens/login_screen.dart';
 import 'package:student_utils_app/service/calendar/google_calendar_service.dart';
@@ -17,23 +18,28 @@ class CalendarScreen extends StatefulWidget {
 
 class CalendarScreenState extends State<CalendarScreen> {
   CalendarController _calendarController;
-  ScrollController _scrollController;
+  ItemScrollController _scrollController;
   Future<Map<String, List<CalendarEvent>>> futureEvents;
   double heightCalendar;
+  bool tabCalIsCollapsed;
+  Color appBarColor;
+  Color titleColor;
 
   @override
   void initState() {
+    _scrollController = ItemScrollController();
     super.initState();
-    _scrollController = ScrollController(initialScrollOffset: 7);
     _calendarController = CalendarController();
     heightCalendar = 0.0;
+    tabCalIsCollapsed = true;
+    appBarColor = Colors.black;
+    titleColor = Colors.white;
     futureEvents = initCalendar();
   }
 
   @override
   void dispose() {
     _calendarController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -43,62 +49,23 @@ class CalendarScreenState extends State<CalendarScreen> {
       body: Stack(
         children: <Widget>[
           Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              height: heightCalendar + 90,
-              child: Column(
-                children: <Widget>[
-                  GestureDetector(
-                    child: buildTopBar("Calendar"),
-                    onTap: () {
-                      setState(() {
-                        if (heightCalendar == 0) {
-                          List<DateTime> list = _calendarController.visibleDays;
-                          DateTime first = list[0];
-                          DateTime last = list[list.length - 1];
-                          int rows = last.difference(first).inDays ~/ 7;
-                          heightCalendar = 140.0 + rows * 40;
-                        } else
-                          heightCalendar = 0.0;
-                      });
-                    },
-                  ),
-                  TableCalendar(
-                    calendarController: _calendarController,
-                    rowHeight: 40.0,
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Month',
-                      CalendarFormat.week: 'Week',
-                    },
-                    headerStyle: HeaderStyle(
-                      formatButtonShowsNext: false,
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            color: Colors.indigo,
+            child: Column(
+              children: <Widget>[
+                _buildTableCalendar(),
+                Flexible(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
                     ),
-                    onDaySelected: (day, list) => scrollTo(day),
-                    onVisibleDaysChanged: _onVisibleDaysChanged,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height - 88.0,
+                        color: Colors.white,
+                        child: _buildDateList()),
                   ),
-                ],
-              )),
-          Column(
-            children: <Widget>[
-              SizedBox(
-                height: heightCalendar + 90,
-                width: 0.1,
-              ),
-              Flexible(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height - 88.0,
-                      color: Colors.white,
-                      child: _buildDateList()),
-                ),
-              ),
-            ],
-          ),
           Padding(
             padding: EdgeInsets.only(top: 33.0),
             child: RaisedButton(
@@ -120,8 +87,26 @@ class CalendarScreenState extends State<CalendarScreen> {
               elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40)),
+              ],
             ),
           )
+          GestureDetector(
+            child: SafeArea(
+                child: buildTopBar("Calendar",
+                    color: appBarColor, titleColor: titleColor)),
+            onTap: () {
+              setState(() {
+                if (tabCalIsCollapsed) {
+                  appBarColor = titleColor = Colors.transparent;
+                  tabCalIsCollapsed = false;
+                } else {
+                  appBarColor = Colors.black;
+                  titleColor = Colors.white;
+                  tabCalIsCollapsed = true;
+                }
+              });
+            },
+          ),
         ],
       ),
       floatingActionButton: Padding(
@@ -160,9 +145,9 @@ class CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildListView() {
-    return ListView.builder(
-        padding: EdgeInsets.all(6.0),
-        controller: _scrollController,
+    return ScrollablePositionedList.builder(
+        padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
+        itemScrollController: _scrollController,
         itemCount: dateEvents.length,
         itemBuilder: (BuildContext context, int index) {
           String date = dateEvents.keys.elementAt(index);
@@ -172,7 +157,7 @@ class CalendarScreenState extends State<CalendarScreen> {
               dateEvents[date],
               date != toDate(DateTime.now().toLocal()).toString(),
             ),
-            Divider(height: 8),
+            Divider(height: 10.0),
           ]);
         });
   }
@@ -301,5 +286,32 @@ class CalendarScreenState extends State<CalendarScreen> {
     if (format == CalendarFormat.week) {
       _calendarController.setSelectedDay(first, runCallback: true);
     }
+  }
+
+  _buildTableCalendar() {
+    if (tabCalIsCollapsed) {
+      return SizedBox(height: 60.0);
+    }
+    return TableCalendar(
+      calendarController: _calendarController,
+      rowHeight: 40.0,
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      availableCalendarFormats: const {
+        CalendarFormat.month: 'Month',
+      },
+      headerStyle: HeaderStyle(
+        formatButtonShowsNext: false,
+        leftChevronIcon: Icon(Icons.close, color: Colors.transparent), // Hide
+        rightChevronIcon: Icon(Icons.close, color: Colors.transparent), // Hide
+      ),
+      onDaySelected: (day, list) => scrollTo(day),
+      onVisibleDaysChanged: _onVisibleDaysChanged,
+    );
+  }
+
+  void scrollTo(DateTime date) {
+    _scrollController.scrollTo(
+        index: date.difference(DateTime.now()).inDays,
+        duration: Duration(milliseconds: 400));
   }
 }
