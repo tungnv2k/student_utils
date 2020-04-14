@@ -66,30 +66,10 @@ class CalendarScreenState extends State<CalendarScreen> {
                         color: Colors.white,
                         child: _buildDateList()),
                   ),
-          Padding(
-            padding: EdgeInsets.only(top: 33.0),
-            child: RaisedButton(
-              onPressed: () {
-                signOutGoogle();
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) {
-                  return LoginScreen();
-                }), ModalRoute.withName('/'));
-              },
-              color: Colors.deepPurple,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Sign Out',
-                  style: TextStyle(fontSize: 25, color: Colors.white),
                 ),
-              ),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40)),
               ],
             ),
-          )
+          ),
           GestureDetector(
             child: SafeArea(
                 child: buildTopBar("Calendar",
@@ -107,6 +87,31 @@ class CalendarScreenState extends State<CalendarScreen> {
               });
             },
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 33.0),
+            child: RaisedButton(
+              onPressed: () {
+                signOutGoogle();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) {
+                    return LoginScreen();
+                  }),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              color: Colors.deepPurple,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Sign Out',
+                  style: TextStyle(fontSize: 25, color: Colors.white),
+                ),
+              ),
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40)),
+            ),
+          )
         ],
       ),
       floatingActionButton: Padding(
@@ -167,95 +172,86 @@ class CalendarScreenState extends State<CalendarScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-          width: 44.0,
-          height: 44.0,
-          padding: EdgeInsets.only(top: 4.0),
-          margin: EdgeInsets.fromLTRB(2.0, 6.0, 2.0, 0.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              bottomRight: Radius.circular(20.0),
-            ),
-            color: isNotToday ? Colors.transparent : Colors.indigo[400],
-          ),
-          child: Column(
-            children: <Widget>[
-              Text(
-                toWeekDay(date),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isNotToday ? Colors.grey : Colors.white70,
-                ),
-                textAlign: TextAlign.center,
+        Flexible(
+          flex: 3,
+          child: Container(
+            width: 44.0,
+            height: 44.0,
+            padding: EdgeInsets.only(top: 4.0),
+            margin: EdgeInsets.fromLTRB(2.0, 6.0, 2.0, 0.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                bottomRight: Radius.circular(20.0),
               ),
-              Text(
-                toDay(date),
-                style: TextStyle(
-                  fontSize: 22,
-                  color: isNotToday ? Colors.black : Colors.white,
+              color: isNotToday ? Colors.transparent : Colors.indigo[400],
+            ),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  toWeekDay(date),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isNotToday ? Colors.grey : Colors.white70,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              )
-            ],
+                Text(
+                  toDay(date),
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: isNotToday ? Colors.black : Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
           ),
         ),
-        _buildEventList(events),
+        Flexible(flex: 20, child: _buildEventList(events)),
       ],
     );
   }
 
   Widget _buildEventList(List<CalendarEvent> events) {
     if (events.isEmpty) {
-      return Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.fromLTRB(6.0, 5.0, 0.5, 5.0),
-            padding: EdgeInsets.fromLTRB(7.0, 11.0, 7.0, 11.0),
-            width: 320.0,
-            height: 50.0,
-          )
-        ],
-      );
+      return _buildEventTile("No events.", null, null,
+          color: Colors.transparent, textColor: Colors.grey.withOpacity(0.7));
     }
     return Column(
       children: List.generate(events.length, (index) {
         return _buildEventTile(
-          events[index].event,
-          events[index].startTime,
-          events[index].endTime,
-        );
+            events[index].event, events[index].startTime, events[index].endTime,
+            color: Colors.blueAccent);
       }),
     );
   }
 
-  Widget _buildEventTile(String event, DateTime startTime, DateTime endTime) {
+  Widget _buildEventTile(String event, DateTime startTime, DateTime endTime,
+      {Color color, Color textColor = Colors.white}) {
     return Container(
-        padding: EdgeInsets.fromLTRB(6.0, 5.0, 0.5, 5.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+      margin: EdgeInsets.fromLTRB(6.0, 5.0, 3.0, 5.0),
+      padding: EdgeInsets.fromLTRB(8.0, 11.0, 2.0, 11.0),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(10.0, 14.0, 8.0, 14.0),
-                  color: Colors.blueAccent,
-                  width: 320.0,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(event,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15.0)),
-                        _buildTimeFrame(startTime, endTime),
-                      ]),
-                ))
-          ],
-        ));
+            SizedBox(
+              height: 18.0,
+              child: Text(event,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0)),
+            ),
+            _buildTimeFrame(startTime, endTime),
+          ]),
+    );
   }
 
   Widget _buildTimeFrame(DateTime startTime, DateTime endTime) {
