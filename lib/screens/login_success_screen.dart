@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:googleapis/calendar/v3.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
-import 'package:student_utils_app/models/note.dart';
-import 'package:student_utils_app/screens/bookmark_screen.dart';
 import 'package:student_utils_app/screens/calendar_screen.dart';
 import 'package:student_utils_app/screens/note_list_screen.dart';
-import 'package:student_utils_app/service/login/sign_in.dart';
+import 'bookmark_list_screen.dart';
 
 Map<String, List<CalendarEvent>> dateEvents = <String, List<CalendarEvent>>{};
 CalendarApi calendarApi;
 var calendarIds = [];
+DateTime expiry;
 
 class LoginSuccessScreen extends StatefulWidget {
   @override
@@ -22,7 +21,6 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
   @override
   void initState() {
     super.initState();
-    signInWithGoogle(silently: true);
     _pageController = PageController(initialPage: 1);
   }
 
@@ -36,11 +34,11 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: WillPopScope(
-        onWillPop: () => null, // Prevent returning to login_screen
+        onWillPop: () => null, // Prevent returning to login_screen on back button
         child: PageView(
           controller: _pageController,
           children: <Widget>[
-            BookmarkScreen(),
+            BookmarkListScreen(),
             CalendarScreen(),
             NoteListScreen()
           ],
