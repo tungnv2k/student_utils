@@ -13,48 +13,43 @@ final GoogleSignIn googleSignIn = GoogleSignIn(
   ],
 );
 
-String name;
-String email;
-String imageUrl;
-
 Future<bool> signInWithGoogle({bool silently = false}) async {
   GoogleSignInAccount googleSignInAccount;
   FirebaseUser user;
 
-  try {
-    if (silently) {
-      googleSignInAccount = await googleSignIn.signInSilently();
-    } else {
-      googleSignInAccount = await googleSignIn.signIn();
+  expiry = DateTime.now().add(Duration(minutes: 55)).toUtc();
 
-      GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+  if (silently) {
+    googleSignInAccount = await googleSignIn.signInSilently();
+  } else {
+    googleSignInAccount = await googleSignIn.signIn();
 
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+    GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
 
-      user = await _auth.signInWithCredential(credential);
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
 
-      assert(!user.isAnonymous);
-      assert(await user.getIdToken() != null);
+    user = await _auth.signInWithCredential(credential);
 
-      final FirebaseUser currentUser = await _auth.currentUser();
-      assert(user.uid == currentUser.uid);
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
 
-      assert(user.email != null);
-      assert(user.displayName != null);
-      assert(user.photoUrl != null);
-      name = user.displayName;
-      email = user.email;
-      imageUrl = user.photoUrl;
-    }
-    final authHeaders = await googleSignIn.currentUser.authHeaders;
-    getApiAccess(authHeaders);
-  } catch (err) {
-    print(err);
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+
+    assert(user.email != null);
+    assert(user.displayName != null);
+    assert(user.photoUrl != null);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('name', user.displayName);
+    prefs.setString('email', user.email);
+    prefs.setString('imageUrl', user.photoUrl);
   }
+  await getApiAccess();
 
   return user != null;
 }
@@ -63,7 +58,9 @@ void signOutGoogle() async {
   await googleSignIn.signOut();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.remove('name');
   prefs.remove('email');
+  prefs.remove('imageUrl');
 
   dateEvents.clear();
 }
