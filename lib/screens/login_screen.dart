@@ -148,6 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 (Route<dynamic> route) => false,
               );
             }
+            setState(() {
+              _isLoading = false;
+            });
           });
         },
         child: Padding(
