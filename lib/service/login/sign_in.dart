@@ -19,37 +19,41 @@ Future<bool> signInWithGoogle({bool silently = false}) async {
 
   expiry = DateTime.now().add(Duration(minutes: 55)).toUtc();
 
-  if (silently) {
-    googleSignInAccount = await googleSignIn.signInSilently();
-  } else {
-    googleSignInAccount = await googleSignIn.signIn();
+  try {
+    if (silently) {
+      googleSignInAccount = await googleSignIn.signInSilently();
+    } else {
+      googleSignInAccount = await googleSignIn.signIn();
 
-    GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+      GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
 
-    user = await _auth.signInWithCredential(credential);
+      user = await _auth.signInWithCredential(credential);
 
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
 
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
+      final FirebaseUser currentUser = await _auth.currentUser();
+      assert(user.uid == currentUser.uid);
 
-    assert(user.email != null);
-    assert(user.displayName != null);
-    assert(user.photoUrl != null);
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(user.photoUrl != null);
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('name', user.displayName);
-    prefs.setString('email', user.email);
-    prefs.setString('imageUrl', user.photoUrl);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('name', user.displayName);
+      prefs.setString('email', user.email);
+      prefs.setString('imageUrl', user.photoUrl);
+    }
+    await getApiAccess();
+  } catch (err) {
+    print(err);
   }
-  await getApiAccess();
 
   return user != null;
 }
