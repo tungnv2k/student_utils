@@ -2,6 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
+import 'package:student_utils_app/screens/event_screen.dart';
 import 'package:student_utils_app/screens/login_screen.dart';
 import 'package:student_utils_app/service/calendar/google_calendar_service.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
@@ -229,29 +230,40 @@ class CalendarScreenState extends State<CalendarScreen> {
 
   Widget _buildEventTile(String event, DateTime startTime, DateTime endTime,
       {Color color, Color textColor = Colors.white}) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(6.0, 5.0, 3.0, 5.0),
-      padding: EdgeInsets.fromLTRB(8.0, 11.0, 2.0, 11.0),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 18.0,
-              child: Text(event,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15.0)),
-            ),
-            _buildTimeFrame(startTime, endTime),
-          ]),
-    );
+    return InkWell(
+        child: Container(
+          margin: EdgeInsets.fromLTRB(6.0, 5.0, 3.0, 5.0),
+          padding: EdgeInsets.fromLTRB(8.0, 11.0, 2.0, 11.0),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 18.0,
+                  child: Text(event,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0)),
+                ),
+                _buildTimeFrame(startTime, endTime),
+              ]),
+        ),
+        splashColor: Colors.white.withOpacity(0.6),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventScreen(
+                date: DateTime(startTime.year, startTime.month, startTime.day),
+                event: event,
+                timeSpan: toTimeFrame(startTime, endTime),
+              ),
+            )));
   }
 
   Widget _buildTimeFrame(DateTime startTime, DateTime endTime) {
