@@ -29,3 +29,21 @@ String toWeekDay(DateTime date) {
   final toStr = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   return toStr[date.weekday - 1];
 }
+
+String toMonth(DateTime date) {
+  final toStr = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  return toStr[date.month - 1];
+}
