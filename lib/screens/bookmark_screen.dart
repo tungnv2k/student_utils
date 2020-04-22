@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:student_utils_app/components/app_bar.dart';
 import 'package:student_utils_app/models/bookmark.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -32,6 +33,16 @@ class BookmarkScreenState extends State<BookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: buildTopBar(
+          title: "Bookmark",
+          leftIcon: EvaIcons.arrowBack,
+          rightIcon: EvaIcons.moreVertical,
+          onLeftTap: () {
+            Navigator.pop(
+              context,
+              Bookmark(title: _titleController.text, link: _linkController.text),
+            );
+          }),
       body: Column(
         children: <Widget>[
           SizedBox(height: 100.0),
@@ -58,20 +69,6 @@ class BookmarkScreenState extends State<BookmarkScreen> {
             ),
           )
         ],
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            EvaIcons.close,
-            size: 35.0,
-            color: Colors.blue,
-          ),
-          backgroundColor: Colors.white,
-        ),
       ),
     );
   }

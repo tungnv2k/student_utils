@@ -1,63 +1,34 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:student_utils_app/components/app_bar.dart';
 import 'package:student_utils_app/models/bookmark.dart';
 import 'package:student_utils_app/screens/bookmark_screen.dart';
+import 'package:student_utils_app/storage/bookmark_storage.dart';
 
 class BookmarkListScreen extends StatefulWidget {
+  const BookmarkListScreen({Key key}) : super(key: key);
+
   @override
   State createState() => BookmarkListScreenState();
 }
 
 class BookmarkListScreenState extends State<BookmarkListScreen> {
-  List<Bookmark> bookmarkList = <Bookmark>[
-    Bookmark(title: "SE 2020", link: "http://link.to.se.excel"),
-    Bookmark(title: "OS 2020", link: "https://link.to.check.attendance"),
-    Bookmark(
-        title:
-            "OOP BI99999999999999999999999999999999999999999999999999999999999999999999999999999999999",
-        link:
-            "http://google.drive.oop.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
-  ];
+  List<Bookmark> bookmarkList;
 
   @override
   Widget build(BuildContext context) {
+    bookmarkList = BookmarkStorage.of(context).bookmarks;
     return Scaffold(
       body: Column(
-        children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: buildTopBar("Bookmark")),
-          Column(
-            children: List.generate(bookmarkList.length, (index) {
-              return _buildBookmark(
-                  bookmarkList[index].title, bookmarkList[index].link);
-            }),
-          ),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return BookmarkScreen(
-                bookmark: Bookmark(title: null, link: null),
-              );
-            }));
-          },
-          child: Icon(
-            EvaIcons.plus,
-            size: 35.0,
-            color: Colors.blue,
-          ),
-          backgroundColor: Colors.white,
-        ),
+        children: List.generate(bookmarkList.length, (index) {
+          return _buildBookmark(
+              index: index,
+              title: bookmarkList[index].title,
+              link: bookmarkList[index].link);
+        }),
       ),
     );
   }
 
-  Widget _buildBookmark(String title, String link) {
+  Widget _buildBookmark({@required int index, String title, String link}) {
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 8.0),
@@ -112,14 +83,23 @@ class BookmarkListScreenState extends State<BookmarkListScreen> {
         ),
       ),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => BookmarkScreen(
-                    bookmark: Bookmark(title: title, link: link),
-                  )),
-        );
+        _awaitBookmarkUpdate(context, index, title, link);
       },
     );
+  }
+
+  void _awaitBookmarkUpdate(BuildContext context, int index, String title, String link) async {
+    Bookmark currentBookmark = Bookmark(title: title, link: link);
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookmarkScreen(bookmark: currentBookmark),
+        ));
+
+    setState(() {
+      if (result != null || result != currentBookmark) {
+        BookmarkStorage.of(context).bookmarks[index] = result;
+      }
+    });
   }
 }
