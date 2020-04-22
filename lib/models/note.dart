@@ -14,4 +14,13 @@ class Note {
     this.color,
     this.updatedAt,
   });
+
+  @override
+  bool operator ==(covariant Note other) {
+    return this.title == (other.title) &&
+        this.description == (other.description);
+  }
+
+  @override
+  int get hashCode => this.hashCode;
 }
