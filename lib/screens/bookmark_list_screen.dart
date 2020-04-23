@@ -97,7 +97,7 @@ class BookmarkListScreenState extends State<BookmarkListScreen> {
         ));
 
     setState(() {
-      if (result != null || result != currentBookmark) {
+      if (result != null && result != currentBookmark) {
         BookmarkStorage.of(context).bookmarks[index] = result;
       }
     });
