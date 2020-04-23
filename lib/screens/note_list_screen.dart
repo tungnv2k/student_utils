@@ -53,12 +53,12 @@ class NoteListScreenState extends State<NoteListScreen> {
   }
 
   Widget _buildNotes({@required int index, String title, String note}) {
-    final noteTitle = title == null
+    final noteTitle = title == ""
         ? note.substring(
             0, (note.length <= 15 ? note.length : 15)) // Limit title characters
         : title;
     final description =
-        title == null ? (note.length > 15 ? note.substring(15) : "") : note;
+        title == "" ? (note.length > 15 ? note.substring(15) : "") : note;
 
     return GestureDetector(
       child: Container(
@@ -109,7 +109,7 @@ class NoteListScreenState extends State<NoteListScreen> {
         ));
 
     setState(() {
-      if (result != null || result != currentNote) {
+      if (result != null && result != currentNote) {
         NoteStorage.of(context).notes[index] = result;
       }
     });
