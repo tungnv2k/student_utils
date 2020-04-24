@@ -7,17 +7,21 @@ import 'package:student_utils_app/screens/login_screen.dart';
 import 'package:student_utils_app/service/calendar/google_calendar_service.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 import 'package:student_utils_app/service/parse/date_time_parse.dart';
+import 'package:student_utils_app/storage/calendar_storage.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../components/app_bar.dart';
 import 'login_success_screen.dart';
 
 class CalendarScreen extends StatefulWidget {
+  const CalendarScreen({Key key}) : super(key: key);
+
   @override
   State createState() => CalendarScreenState();
 }
 
 class CalendarScreenState extends State<CalendarScreen> {
+  Map<String, List<CalendarEvent>> dateEvents;
   CalendarController _calendarController;
   ItemScrollController _scrollController;
   Future<Map<String, List<CalendarEvent>>> futureEvents;
@@ -46,6 +50,7 @@ class CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    dateEvents = CalendarStorage.of(context).dateEvents;
     return Scaffold(
       body: Stack(
         children: <Widget>[
