@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:googleapis/calendar/v3.dart' show CalendarApi;
+import 'package:student_utils_app/app_life_cycle.dart';
 import 'package:student_utils_app/models/bookmark.dart';
 import 'package:student_utils_app/models/calendar_event.dart';
 import 'package:student_utils_app/models/note.dart';
@@ -39,6 +40,12 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+      detachedCallBack: () async {
+        await writeNotes(notes);
+        await writeBookmarks(bookmarks);
+      },
+    ));
     readNotes().then((result) {
       setState(() {
         notes = result;
