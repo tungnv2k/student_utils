@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_utils_app/screens/login_success_screen.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 
@@ -13,10 +14,15 @@ class _NoLoginScreenState extends State<NoLoginScreen> {
   @override
   void initState() {
     super.initState();
-    loginFuture = signInWithGoogle(silently: true).whenComplete(() {
+    loginFuture = signInWithGoogle(silently: true).whenComplete(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) {
-          return LoginSuccessScreen();
+          return LoginSuccessScreen(
+            name: prefs.getString('name'),
+            email: prefs.getString('email'),
+            imageUrl: prefs.getString('imageUrl'),
+          );
         }),
         (Route<dynamic> route) => false,
       );
