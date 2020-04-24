@@ -65,6 +65,4 @@ void signOutGoogle() async {
   prefs.remove('name');
   prefs.remove('email');
   prefs.remove('imageUrl');
-
-  dateEvents.clear();
 }

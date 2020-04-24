@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_utils_app/service/login/sign_in.dart';
 
 import 'login_success_screen.dart';
@@ -139,10 +140,15 @@ class _LoginScreenState extends State<LoginScreen> {
           });
           signInWithGoogle().then((isLoggedIn) async {
             if (isLoggedIn) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (context) {
-                    return LoginSuccessScreen();
+                    return LoginSuccessScreen(
+                      name: prefs.getString('name'),
+                      email: prefs.getString('email'),
+                      imageUrl: prefs.getString('imageUrl'),
+                    );
                   },
                 ),
                 (Route<dynamic> route) => false,
