@@ -52,6 +52,7 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
         await writeNotes(notes);
         await writeBookmarks(bookmarks);
       },
+      resumeCallBack: () => null
     ));
     readNotes().then((result) {
       setState(() {
