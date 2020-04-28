@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:googleapis/calendar/v3.dart' show CalendarApi;
 import 'package:student_utils_app/app_life_cycle.dart';
 import 'package:student_utils_app/components/app_bar.dart';
@@ -41,6 +42,7 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
   List<Bookmark> bookmarks = <Bookmark>[];
   List<Note> notes = <Note>[];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static const platform = const MethodChannel('app.channel.shared.data');
   PageController _pageController;
   var _appBarTitle = "Calendar";
   var _onFABPressed;
@@ -65,10 +67,34 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
       });
     });
     super.initState();
+    _initShare();
     _onFABPressed = _onCalendarTap;
     _pageController = PageController(initialPage: 1);
   }
 
+  _initShare() async {
+    // App is already running in background
+    // Listen to lifecycle changes to subsequently call Java MethodHandler to check for shared data
+    SystemChannels.lifecycle.setMessageHandler((msg) {
+      if (msg.contains('resumed')) {
+        _getSharedData().then((d) {
+          if (d.isEmpty) return;
+          _onBookmarkShare("", d["text"]);
+        });
+      }
+      return;
+    });
+
+    // App is started by the intent
+    // Call Java MethodHandler on application start up to check for shared data
+    var data = await _getSharedData();
+    if (data.isNotEmpty) {
+      _onBookmarkShare("", data["text"]);
+    }
+  }
+
+  Future<Map> _getSharedData() async =>
+      await platform.invokeMethod('getSharedData');
   @override
   void dispose() {
     _pageController.dispose();
@@ -200,6 +226,21 @@ class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
       if (result != null && result != currentNote) {
         notes.add(result);
       }
+    });
+  }
+
+  void _onBookmarkShare(String title, String link) async {
+    _pageController.jumpToPage(0);
+
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              BookmarkScreen(bookmark: Bookmark(title: title, link: link)),
+        ));
+
+    setState(() {
+      bookmarks.add(result);
     });
   }
 }
