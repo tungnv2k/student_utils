@@ -24,7 +24,7 @@ class AutoRefreshClient extends IOClient {
   AutoRefreshClient(this._headers) : super();
 
   @override
-  Future<StreamedResponse> send(BaseRequest request) {
+  Future<IOStreamedResponse> send(BaseRequest request) {
     var tokenExpired = DateTime.now().toUtc().isAfter(expiry.toUtc());
     if (tokenExpired) {
       refreshClient().then((headers) {
