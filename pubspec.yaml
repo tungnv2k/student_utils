@@ -79,9 +79,16 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
-    - family: ProximaNovaSoft
+    - family: Rubik
       fonts:
-        - asset: fonts/ProximaNovaSoft-Regular.otf
+        - asset: fonts/Rubik-Bold.ttf
+        - asset: fonts/Rubik-BoldItalic.ttf
+        - asset: fonts/Rubik-Italic.ttf
+        - asset: fonts/Rubik-Light.ttf
+        - asset: fonts/Rubik-LightItalic.ttf
+        - asset: fonts/Rubik-Medium.ttf
+        - asset: fonts/Rubik-MediumItalic.ttf
+        - asset: fonts/Rubik-Regular.ttf
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
