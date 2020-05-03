@@ -40,9 +40,7 @@ class _EventScreenState extends State<EventScreen> {
               color: Colors.blue,
               child: RichText(
                 text: TextSpan(
-                    style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontFamily: 'ProximaNovaSoft'),
+                    style: TextStyle(color: Colors.white.withOpacity(0.8)),
                     children: <TextSpan>[
                       TextSpan(
                           text: toWeekDay(widget.date),
@@ -67,9 +65,7 @@ class _EventScreenState extends State<EventScreen> {
                     child: Text(
                       widget.event,
                       style: TextStyle(
-                          fontFamily: 'ProximaNovaSoft',
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.w500),
+                          fontSize: 26.0, fontWeight: FontWeight.w500),
                       textAlign: TextAlign.end,
                     ),
                   ),
@@ -77,10 +73,8 @@ class _EventScreenState extends State<EventScreen> {
                     padding: const EdgeInsets.all(25.0),
                     child: Text(
                       widget.timeSpan,
-                      style: TextStyle(
-                          fontFamily: 'ProximaNovaSoft',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w300),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
                       textAlign: TextAlign.start,
                     ),
                   )

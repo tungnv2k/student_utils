@@ -79,9 +79,6 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
-    - family: ProximaNovaSoft
-      fonts:
-        - asset: fonts/ProximaNovaSoft-Regular.otf
     - family: Rubik
       fonts:
         - asset: fonts/Rubik-Bold.ttf
